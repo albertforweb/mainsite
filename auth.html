@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adventure - Admin console</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 40px 24px;
+    }
+    .panel {
+      width: 100%;
+      max-width: 1000px;
+      padding: 26px 28px;
+    }
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+    .panel-head h2 { margin: 0; font-size: 20px; }
+    .btn {
+      display: inline-block;
+      padding: 9px 18px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--grad);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { background: linear-gradient(135deg, #f472b6, #a78bfa); }
+    .btn.danger {
+      background: transparent;
+      border: 1px solid rgba(251, 113, 133, 0.5);
+      color: var(--danger);
+    }
+    .btn.danger:hover { background: rgba(251, 113, 133, 0.12); }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn.ghost:hover { background: var(--border); color: var(--text); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    td.actions, th.actions { text-align: right; white-space: nowrap; }
+    td .role-tag {
+      display: inline-block;
+      margin: 0 4px 4px 0;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--grad);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .empty { color: var(--muted); text-align: center; padding: 24px 0; }
+    /* modal */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: rgba(8, 2, 18, 0.7);
+      backdrop-filter: blur(3px);
+    }
+    .overlay.show { display: flex; }
+    .modal {
+      width: 100%;
+      max-width: 460px;
+      max-height: 90vh;
+      overflow: auto;
+      padding: 28px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+    }
+    .modal h3 { margin: 0 0 16px; font-size: 18px; }
+    .modal label {
+      display: block;
+      margin: 10px 0 5px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    .modal input, .modal select {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0b1526;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .modal input:focus, .modal select:focus { border-color: var(--accent); }
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 6px 0;
+      font-size: 14px;
+    }
+    .check-row input {
+      width: auto;
+    }
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .denied {
+      max-width: 480px;
+      text-align: center;
+      padding: 40px 34px;
+    }
+    .denied h2 { margin: 0 0 8px; font-size: 22px; }
+    .denied p { margin: 0 0 20px; color: var(--muted); line-height: 1.6; }
+    .err-line {
+      margin-top: 12px;
+      color: var(--danger);
+      font-size: 13px;
+    }
+    .spinner { color: var(--muted); text-align: center; padding: 40px 0; }
+    @media (max-width: 800px) {
+      .admin-main { padding: 24px 12px; }
+      .panel { padding: 18px 14px; overflow-x: auto; }
+      table { font-size: 13px; }
+      th, td { padding: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <img id="bgImage" alt="">
+  <div id="bgOverlay"></div>
+  <div class="page">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">M</div>
+      <h1>Adventure</h1>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="blogs.html">Blogs</a>
+    </nav>
+    <button class="hamburger" id="navToggle" type="button" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="user-menu">
+      <a class="btn-sm" id="navSignIn" href="login.html">Sign in</a>
+      <button class="user-btn" id="userMenuBtn" type="button" style="display:none">
+        <img id="navAvatar" alt="Avatar">
+        <span id="navUsername"></span>
+        <span class="caret">&#9662;</span>
+      </button>
+      <div class="dropdown" id="userDropdown" style="display:none">
+        <a href="#" id="ddProfile">Account</a>
+        <a href="#" id="ddSignOut">Sign out</a>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="blogs.html">Blogs</a>
+  </div>
+
+  <main class="admin-main">
+    <div id="deniedView" class="card denied" style="display:none">
+      <h2>Access denied</h2>
+      <p>You need the <strong>admin</strong> role to manage users and roles.</p>
+      <a class="btn" href="index.html">Back to home</a>
+    </div>
+
+    <div id="loadingView" class="spinner">Loading admin console...</div>
+
+    <section id="manageView" class="card panel" style="display:none">
+      <div class="panel-head">
+        <h2>Users</h2>
+        <button class="btn" id="newUserBtn" type="button">New user</button>
+      </div>
+      <div id="usersWrap"></div>
+    </section>
+
+    <section id="rolesView" class="card panel" style="display:none">
+      <div class="panel-head">
+        <h2>Roles</h2>
+        <button class="btn" id="newRoleBtn" type="button">New role</button>
+      </div>
+      <div id="rolesWrap"></div>
+    </section>
+  </main>
+
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h3 id="modalTitle"></h3>
+      <form id="modalForm" novalidate>
+        <div id="modalFields"></div>
+        <div id="modalError" class="err-line"></div>
+        <div class="modal-actions">
+          <button id="modalCancel" class="btn ghost" type="button">Cancel</button>
+          <button id="modalSave" class="btn" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <span>&copy; 2026 Adventure</span>
+    <nav>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      let roles = [];
+      let users = [];
+
+      const $ = (id) => document.getElementById(id);
+      const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+      function isAdmin(user) { return Adventure.isAdmin(user); }
+
+      function roleTags(names) {
+        return (names || []).map((n) => '<span class="role-tag">' + esc(n) + '</span>').join('');
+      }
+
+      function renderUsers() {
+        const wrap = $('usersWrap');
+        if (!users.length) { wrap.innerHTML = '<div class="empty">No users yet.</div>'; return; }
+        wrap.innerHTML =
+          '<table><thead><tr>' +
+          '<th>User</th><th>Email</th><th>Status</th><th>Roles</th><th class="actions">Actions</th>' +
+          '</tr></thead><tbody>' +
+          users.map((u) => '<tr>' +
+            '<td><strong>' + esc(u.display_name || u.username) + '</strong><br><span style="color:var(--muted)">@' + esc(u.username) + '</span></td>' +
+            '<td>' + esc(u.email || '-') + '</td>' +
+            '<td>' + esc(u.status || 'active') + '</td>' +
+            '<td>' + roleTags(u.roles) + '</td>' +
+            '<td class="actions">' +
+              '<button class="btn ghost" data-act="editUser" data-id="' + esc(u.id) + '">Edit</button> ' +
+              '<button class="btn danger" data-act="delUser" data-id="' + esc(u.id) + '">Delete</button>' +
+            '</td></tr>').join('') +
+          '</tbody></table>';
+      }
+
+      function renderRoles() {
+        const wrap = $('rolesWrap');
+        if (!roles.length) { wrap.innerHTML = '<div class="empty">No roles yet.</div>'; return; }
+        wrap.innerHTML =
+          '<table><thead><tr>' +
+          '<th>Name</th><th>Description</th><th class="actions">Actions</th>' +
+          '</tr></thead><tbody>' +
+          roles.map((r) => '<tr>' +
+            '<td><strong>' + esc(r.name) + '</strong></td>' +
+            '<td>' + esc(r.description || '-') + '</td>' +
+            '<td class="actions">' +
+              '<button class="btn ghost" data-act="editRole" data-id="' + esc(r.id) + '">Edit</button> ' +
+              '<button class="btn danger" data-act="delRole" data-id="' + esc(r.id) + '">Delete</button>' +
+            '</td></tr>').join('') +
+          '</tbody></table>';
+      }
+
+      function showModal(title, html) {
+        $('modalTitle').textContent = title;
+        $('modalFields').innerHTML = html;
+        $('modalError').textContent = '';
+        $('overlay').classList.add('show');
+      }
+
+      function hideModal() {
+        $('overlay').classList.remove('show');
+      }
+
+      function setModalError(msg) {
+        $('modalError').textContent = msg || '';
+        const btn = $('modalSave');
+        btn.disabled = false;
+        btn.textContent = 'Save';
+      }
+
+      function field(name, label, value, type, extra) {
+        const v = esc(value ?? '');
+        if (type === 'select') {
+          return '<label for="f_' + name + '">' + label + '</label>' +
+            '<select id="f_' + name + '" name="' + name + '">' + (extra || '') + '</select>';
+        }
+        return '<label for="f_' + name + '">' + label + '</label>' +
+          '<input id="f_' + name + '" name="' + name + '" type="' + (type || 'text') + '" value="' + v + '" autocomplete="off">';
+      }
+
+      function roleCheckboxes(selected) {
+        const sel = selected || [];
+        return roles.map((r) =>
+          '<label class="check-row"><input type="checkbox" name="roles" value="' + esc(r.name) + '"' +
+          (sel.includes(r.name) ? ' checked' : '') + '> ' + esc(r.name) + '</label>'
+        ).join('') || '<div class="empty">No roles defined</div>';
+      }
+
+      function statusOptions(current) {
+        return ['active', 'inactive', 'suspended'].map((s) =>
+          '<option value="' + s + '"' + (s === (current || 'active') ? ' selected' : '') + '>' + s + '</option>'
+        ).join('');
+      }
+
+      function openUserModal(user) {
+        const isEdit = !!user;
+        const pwField = isEdit
+          ? field('password', 'Reset password (leave blank to keep)', '', 'password')
+          : field('password', 'Password (min 8 chars)', '', 'password');
+        const html =
+          (isEdit ? '<input type="hidden" id="f_id" value="' + esc(user.id) + '">' : '') +
+          field('username', 'Username', isEdit ? user.username : '', 'text') +
+          field('displayName', 'Display name', isEdit ? user.display_name : '', 'text') +
+          field('email', 'Email', isEdit ? user.email : '', 'email') +
+          '<label for="f_status">Status</label><select id="f_status" name="status">' + statusOptions(isEdit ? user.status : 'active') + '</select>' +
+          pwField +
+          '<label>Roles</label>' + roleCheckboxes(isEdit ? user.roles : []);
+        showModal(isEdit ? 'Edit user' : 'Create user', html);
+        $('modalForm').dataset.mode = isEdit ? 'edit' : 'create';
+        $('modalForm').dataset.id = isEdit ? user.id : '';
+        if (!isEdit) $('f_username').focus();
+      }
+
+      function openRoleModal(role) {
+        const isEdit = !!role;
+        const html =
+          (isEdit ? '<input type="hidden" id="f_id" value="' + esc(role.id) + '">' : '') +
+          field('name', 'Name', isEdit ? role.name : '', 'text') +
+          field('description', 'Description', isEdit ? role.description : '', 'text');
+        showModal(isEdit ? 'Edit role' : 'Create role', html);
+        $('modalForm').dataset.mode = isEdit ? 'edit' : 'create';
+        $('modalForm').dataset.id = isEdit ? role.id : '';
+        if (!isEdit) $('f_name').focus();
+      }
+
+      async function submitModal() {
+        const btn = $('modalSave');
+        btn.disabled = true;
+        btn.textContent = 'Saving...';
+        const mode = $('modalForm').dataset.mode;
+        const id = $('modalForm').dataset.id;
+        const isRole = $('modalTitle').textContent.includes('role');
+        try {
+          if (isRole) {
+            const payload = { name: $('f_name').value.trim(), description: $('f_description').value };
+            if (mode === 'edit') await Adventure.updateRole(id, payload);
+            else await Adventure.createRole(payload);
+          } else {
+            const payload = {
+              displayName: $('f_displayName').value.trim(),
+              email: $('f_email').value,
+              status: $('f_status').value,
+              roles: Array.from(document.querySelectorAll('input[name="roles"]:checked')).map((c) => c.value),
+            };
+            const password = $('f_password').value;
+            if (password) payload.password = password;
+            if (mode === 'edit') {
+              await Adventure.updateUser(id, payload);
+            } else {
+              payload.username = $('f_username').value.trim();
+              await Adventure.createUser(payload);
+            }
+          }
+          hideModal();
+          await load();
+        } catch (err) {
+          setModalError(err.message);
+        }
+      }
+
+      async function load() {
+        roles = await Adventure.listRoles();
+        users = await Adventure.listUsers();
+        $('loadingView').style.display = 'none';
+        $('manageView').style.display = '';
+        $('rolesView').style.display = '';
+        renderUsers();
+        renderRoles();
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        let user = await Adventure.fetchMe();
+        if (!user) { location.replace('login.html'); return; }
+        Adventure.setUser(user);
+        if (!isAdmin(user)) {
+          $('loadingView').style.display = 'none';
+          $('deniedView').style.display = '';
+          return;
+        }
+        try {
+          await load();
+        } catch (err) {
+          $('loadingView').textContent = err.message;
+        }
+      });
+
+      document.addEventListener('click', async (e) => {
+        const btn = e.target.closest('[data-act]');
+        if (!btn) return;
+        const act = btn.dataset.act;
+        const id = btn.dataset.id;
+        if (act === 'editUser') {
+          openUserModal(users.find((u) => u.id === id));
+        } else if (act === 'delUser') {
+          const u = users.find((x) => x.id === id);
+          if (!confirm('Delete user @' + (u ? u.username : '') + '?')) return;
+          try { await Adventure.deleteUser(id); await load(); }
+          catch (err) { alert(err.message); }
+        } else if (act === 'editRole') {
+          const r = roles.find((x) => x.id === id);
+          if (!r) return;
+          openRoleModal(r);
+        } else if (act === 'delRole') {
+          const r = roles.find((x) => x.id === id);
+          if (r && !confirm('Delete role "' + r.name + '"?')) return;
+          try { await Adventure.deleteRole(id); await load(); }
+          catch (err) { alert(err.message); }
+        }
+      });
+
+      $('newUserBtn').addEventListener('click', () => openUserModal(null));
+      $('newRoleBtn').addEventListener('click', () => openRoleModal(null));
+      $('modalCancel').addEventListener('click', hideModal);
+      $('modalForm').addEventListener('submit', (e) => { e.preventDefault(); submitModal(); });
+      $('overlay').addEventListener('click', (e) => { if (e.target === $('overlay')) hideModal(); });
+
+      window.Adventure = window.Adventure || {};
+    })();
+  </script>
+</body>
+</html>

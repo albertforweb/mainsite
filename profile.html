@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adventure - Account</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .account-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      padding: 40px 24px;
+    }
+    .panel {
+      width: 100%;
+      max-width: 640px;
+      padding: 28px 30px;
+    }
+    .panel h2 {
+      margin: 0 0 18px;
+      font-size: 20px;
+    }
+    .profile-head {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+    .avatar-lg {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      border: 3px solid #e879f9;
+      box-shadow: 0 0 24px rgba(232, 121, 249, 0.45);
+    }
+    .profile-head h3 {
+      margin: 0 0 2px;
+      font-size: 22px;
+    }
+    .profile-head .handle {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .badge.active { border-color: #10b981; color: #6ee7b7; }
+    .role-tag {
+      display: inline-block;
+      margin: 0 6px 6px 0;
+      padding: 4px 12px;
+      border-radius: 999px;
+      background: var(--grad);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px 16px;
+      margin-top: 18px;
+      font-size: 14px;
+    }
+    .info-grid dt { color: var(--muted); }
+    .info-grid dd { margin: 0; }
+    .roles-box {
+      margin-top: 16px;
+    }
+    .roles-box p {
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    label {
+      display: block;
+      margin: 0 0 5px;
+      font-size: 13px;
+      color: var(--text);
+    }
+    input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0b1526;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus { border-color: var(--accent); }
+    button[type="submit"] {
+      align-self: flex-start;
+      width: auto;
+      margin: 4px 0 0;
+      padding: 11px 26px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--grad);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(217, 70, 239, 0.35);
+    }
+    button[type="submit"]:hover { background: linear-gradient(135deg, #f472b6, #a78bfa); }
+    button[type="submit"]:disabled { opacity: 0.6; cursor: not-allowed; }
+    .msg {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .msg.show { display: block; }
+    .msg.ok { background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35); color: #6ee7b7; }
+    .msg.err { background: rgba(248, 113, 113, 0.12); border: 1px solid rgba(248, 113, 113, 0.35); color: var(--danger); }
+    @media (max-width: 560px) {
+      .account-main { padding: 24px 16px; }
+      .panel { padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <img id="bgImage" alt="">
+  <div id="bgOverlay"></div>
+  <div class="page">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">M</div>
+      <h1>Adventure</h1>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="blogs.html">Blogs</a>
+    </nav>
+    <button class="hamburger" id="navToggle" type="button" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="user-menu">
+      <a class="btn-sm" id="navSignIn" href="login.html">Sign in</a>
+      <button class="user-btn" id="userMenuBtn" type="button" style="display:none">
+        <img id="navAvatar" alt="Avatar">
+        <span id="navUsername"></span>
+        <span class="caret">&#9662;</span>
+      </button>
+      <div class="dropdown" id="userDropdown" style="display:none">
+        <a href="#" id="ddProfile">Account</a>
+        <a href="#" id="ddSignOut">Sign out</a>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="blogs.html">Blogs</a>
+  </div>
+
+  <main class="account-main">
+    <section class="card panel">
+      <h2>Your account</h2>
+      <div class="profile-head">
+        <img id="avatar" class="avatar-lg" alt="Avatar">
+        <div>
+          <h3 id="displayName"></h3>
+          <p class="handle" id="usernameLabel"></p>
+          <span class="badge" id="statusBadge"></span>
+        </div>
+      </div>
+      <dl class="info-grid">
+        <dt>Email</dt><dd id="emailLabel">-</dd>
+        <dt>Member since</dt><dd id="createdLabel">-</dd>
+        <dt>Last updated</dt><dd id="updatedLabel">-</dd>
+      </dl>
+      <div class="roles-box">
+        <p>Roles</p>
+        <div id="rolesList"></div>
+      </div>
+    </section>
+
+    <section class="card panel">
+      <h2>Change password</h2>
+      <form id="pwForm" novalidate>
+        <div>
+          <label for="currentPassword">Current password</label>
+          <input id="currentPassword" name="currentPassword" type="password" autocomplete="current-password" required>
+        </div>
+        <div>
+          <label for="newPassword">New password</label>
+          <input id="newPassword" name="newPassword" type="password" autocomplete="new-password" required>
+        </div>
+        <div>
+          <label for="confirmPassword">Confirm new password</label>
+          <input id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required>
+        </div>
+        <button id="pwSubmit" type="submit">Change password</button>
+      </form>
+      <div id="pwMsg" class="msg"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; 2026 Adventure</span>
+    <nav>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      function pad(v) { return String(v).padStart(2, '0'); }
+      function fmt(iso) {
+        if (!iso) return '-';
+        const d = new Date(iso);
+        if (isNaN(d)) return '-';
+        return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate());
+      }
+
+      function render(user) {
+        const name = user.display_name || user.username;
+        document.getElementById('avatar').src = Adventure.makeAvatar(name);
+        document.getElementById('avatar').alt = name;
+        document.getElementById('displayName').textContent = name;
+        document.getElementById('usernameLabel').textContent = '@' + user.username;
+        document.getElementById('emailLabel').textContent = user.email || '-';
+        document.getElementById('createdLabel').textContent = fmt(user.created_at);
+        document.getElementById('updatedLabel').textContent = fmt(user.updated_at);
+        const badge = document.getElementById('statusBadge');
+        badge.textContent = user.status || 'active';
+        badge.classList.toggle('active', (user.status || 'active') === 'active');
+        const rolesEl = document.getElementById('rolesList');
+        rolesEl.innerHTML = '';
+        (user.roles || []).forEach(function (r) {
+          const tag = document.createElement('span');
+          tag.className = 'role-tag';
+          tag.textContent = r;
+          rolesEl.appendChild(tag);
+        });
+        if (!(user.roles || []).length) rolesEl.textContent = 'No roles assigned';
+      }
+
+      function showMsg(cls, text) {
+        const el = document.getElementById('pwMsg');
+        el.textContent = text;
+        el.className = 'msg show ' + cls;
+      }
+
+      document.addEventListener('DOMContentLoaded', async () => {
+        let user = await Adventure.fetchMe();
+        if (!user) { location.replace('login.html'); return; }
+        Adventure.setUser(user);
+        render(user);
+
+        document.getElementById('pwForm').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const el = document.getElementById('pwMsg');
+          el.className = 'msg';
+          const current = document.getElementById('currentPassword').value;
+          const next = document.getElementById('newPassword').value;
+          const confirm = document.getElementById('confirmPassword').value;
+          if (next.length < 8) { showMsg('err', 'New password must be at least 8 characters.'); return; }
+          if (next !== confirm) { showMsg('err', 'New password and confirmation do not match.'); return; }
+          const btn = document.getElementById('pwSubmit');
+          btn.disabled = true;
+          btn.textContent = 'Saving...';
+          try {
+            await Adventure.changePassword(current, next);
+            document.getElementById('pwForm').reset();
+            showMsg('ok', 'Password changed successfully.');
+          } catch (err) {
+            showMsg('err', err.message);
+          } finally {
+            btn.disabled = false;
+            btn.textContent = 'Change password';
+          }
+        });
+
+        window.Adventure = window.Adventure || {};
+        window.Adventure.onAuth = function (u) {
+          if (!u) location.replace('login.html');
+          else render(u);
+        };
+      });
+    })();
+  </script>
+</body>
+</html>

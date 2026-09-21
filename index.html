@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adventure - Home</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .index-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 24px;
+    }
+    .index-main.top {
+      justify-content: flex-start;
+    }
+    /* cover (welcome state) */
+    .cover {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .cover-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border: 1px solid rgba(217, 70, 239, 0.45);
+      border-radius: 999px;
+      background: rgba(217, 70, 239, 0.12);
+      color: #e9d5ff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    .cover h1 {
+      margin: 18px 0 0;
+      font-size: clamp(36px, 7vw, 58px);
+      line-height: 1.08;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+    }
+    .cover-sub {
+      margin: 14px 0 0;
+      max-width: 560px;
+      color: var(--muted);
+      font-size: clamp(15px, 2vw, 18px);
+      line-height: 1.6;
+    }
+    .cover-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 22px;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 26px;
+      border: 0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .btn-outline:hover { background: var(--border); color: var(--text); }
+    .cover-actions .btn {
+      width: auto;
+      margin: 0;
+    }
+    /* card + profile */
+    .card {
+      width: 100%;
+      max-width: 380px;
+      padding: 32px 28px;
+    }
+    .profile {
+      display: none;
+      text-align: center;
+    }
+    .profile.show { display: block; }
+    .avatar {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      border: 3px solid #e879f9;
+      box-shadow: 0 0 24px rgba(232, 121, 249, 0.45);
+      margin: 0 auto 16px;
+    }
+    .profile h2 {
+      margin: 0 0 4px;
+      font-size: 20px;
+    }
+    .profile p {
+      margin: 0 0 4px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .logout {
+      margin-top: 24px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+    .logout:hover { background: var(--border); color: var(--text); }
+    /* apps dashboard */
+    .apps {
+      width: 100%;
+      max-width: 1000px;
+      padding: 0 24px 40px;
+    }
+    .apps h2 {
+      margin: 0 0 22px;
+      font-size: 24px;
+    }
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .app-tile {
+      display: block;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px;
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .app-tile:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+    }
+    .app-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--grad);
+      color: #fff;
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .app-name {
+      display: block;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .app-desc {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    /* ---------- responsive ---------- */
+    @media (max-width: 920px) {
+      .index-main { padding: 32px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <img id="bgImage" alt="">
+  <div id="bgOverlay"></div>
+  <div class="page">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">M</div>
+      <h1>Adventure</h1>
+    </a>
+    <nav>
+      <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
+      <a href="blogs.html">Blogs</a>
+    </nav>
+    <button class="hamburger" id="navToggle" type="button" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="user-menu">
+      <a class="btn-sm" id="navSignIn" href="login.html">Sign in</a>
+      <button class="user-btn" id="userMenuBtn" type="button" style="display:none">
+        <img id="navAvatar" alt="Avatar">
+        <span id="navUsername"></span>
+        <span class="caret">&#9662;</span>
+      </button>
+      <div class="dropdown" id="userDropdown" style="display:none">
+        <a href="#" id="ddProfile">Account</a>
+        <a href="#" id="ddSignOut">Sign out</a>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html" class="active">Home</a>
+    <a href="about.html">About</a>
+    <a href="blogs.html">Blogs</a>
+  </div>
+
+  <main class="index-main" id="main">
+    <section id="coverView" class="cover">
+      <span class="cover-badge">Explore the world</span>
+      <h1>Welcome to Adventure</h1>
+      <p class="cover-sub">From sweeping coastlines to hidden mountain trails — one account, one journey. Start exploring today.</p>
+      <div class="cover-actions">
+        <a class="btn btn-outline" href="about.html">Learn more</a>
+      </div>
+      </section>
+
+    <div class="card" id="card" style="display:none">
+      <section id="profileView" class="profile">
+        <img id="avatar" class="avatar" alt="Avatar">
+        <h2 id="displayName"></h2>
+        <p id="usernameLabel"></p>
+        <p id="statusLabel"></p>
+        <button class="logout" id="logoutBtn" type="button">Sign out</button>
+      </section>
+    </div>
+
+    <section id="appsView" class="apps" style="display:none">
+      <h2>Your apps</h2>
+      <div class="apps-grid">
+        <a class="app-tile" href="#">
+          <span class="app-icon">M</span>
+          <span class="app-name">Maps</span>
+          <span class="app-desc">Explore destinations and plan routes</span>
+        </a>
+        <a class="app-tile" href="#">
+          <span class="app-icon">W</span>
+          <span class="app-name">Weather</span>
+          <span class="app-desc">Forecasts for your travels</span>
+        </a>
+        <a class="app-tile" href="#">
+          <span class="app-icon">T</span>
+          <span class="app-name">Trips</span>
+          <span class="app-desc">Save and organise your itineraries</span>
+        </a>
+        <a class="app-tile" href="#">
+          <span class="app-icon">G</span>
+          <span class="app-name">Gallery</span>
+          <span class="app-desc">Your captured moments</span>
+        </a>
+        <a class="app-tile" href="#">
+          <span class="app-icon">N</span>
+          <span class="app-name">News</span>
+          <span class="app-desc">Stories from the trail</span>
+        </a>
+        <a class="app-tile" href="#">
+          <span class="app-icon">S</span>
+          <span class="app-name">Settings</span>
+          <span class="app-desc">Manage your account and preferences</span>
+        </a>
+        <a class="app-tile" id="authAppTile" href="auth.html" style="display:none">
+          <span class="app-icon">A</span>
+          <span class="app-name">Auth</span>
+          <span class="app-desc">Manage users, roles and access control</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; 2026 Adventure</span>
+    <nav>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html">Terms</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </footer>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (function () {
+      const mainEl = document.getElementById('main');
+      const coverView = document.getElementById('coverView');
+      const cardEl = document.getElementById('card');
+      const appsView = document.getElementById('appsView');
+      const profileView = document.getElementById('profileView');
+      const avatarEl = document.getElementById('avatar');
+      const displayNameEl = document.getElementById('displayName');
+      const usernameLabelEl = document.getElementById('usernameLabel');
+      const statusLabelEl = document.getElementById('statusLabel');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      function showView(name) {
+        const isProfile = name === 'profile';
+        const isApps = name === 'apps';
+        coverView.style.display = name === 'welcome' ? '' : 'none';
+        cardEl.style.display = isProfile ? '' : 'none';
+        profileView.classList.toggle('show', isProfile);
+        appsView.style.display = isApps ? '' : 'none';
+        mainEl.classList.toggle('top', isProfile || isApps);
+      }
+
+      function displayProfile(user) {
+        avatarEl.src = Adventure.makeAvatar(user.display_name || user.username);
+        avatarEl.alt = user.display_name || user.username;
+        displayNameEl.textContent = user.display_name || user.username;
+        usernameLabelEl.textContent = '@' + user.username;
+        statusLabelEl.textContent = 'Status: ' + (user.status || 'active');
+      }
+
+      async function doLogout() {
+        await Adventure.logout();
+        Adventure.setUser(null);
+        showView('welcome');
+      }
+
+      logoutBtn.addEventListener('click', doLogout);
+
+      window.Adventure = window.Adventure || {};
+      window.Adventure.onProfile = function () {
+        showView('profile');
+        profileView.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      window.Adventure.onLogout = function () {
+        showView('welcome');
+      };
+      window.Adventure.onSessionExpired = function () {
+        showView('welcome');
+      };
+      window.Adventure.onAuth = function (user) {
+        if (user) {
+          displayProfile(user);
+          const authTile = document.getElementById('authAppTile');
+          if (authTile) authTile.style.display = Adventure.isAdmin(user) ? '' : 'none';
+          showView('apps');
+        } else {
+          showView('welcome');
+        }
+      };
+    })();
+  </script>
+</body>
+</html>

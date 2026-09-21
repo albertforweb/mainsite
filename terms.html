@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adventure - Terms</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <img id="bgImage" alt="">
+  <div id="bgOverlay"></div>
+  <div class="page">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <div class="brand-mark">A</div>
+      <h1>Adventure</h1>
+    </a>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="blogs.html">Blogs</a>
+    </nav>
+    <button class="hamburger" id="navToggle" type="button" aria-label="Menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="user-menu">
+      <a class="btn-sm" id="navSignIn" href="login.html">Sign in</a>
+      <button class="user-btn" id="userMenuBtn" type="button" style="display:none">
+        <img id="navAvatar" alt="Avatar">
+        <span id="navUsername"></span>
+        <span class="caret">&#9662;</span>
+      </button>
+      <div class="dropdown" id="userDropdown" style="display:none">
+        <a href="#" id="ddProfile">Profile</a>
+        <a href="#" id="ddSignOut">Sign out</a>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="blogs.html">Blogs</a>
+  </div>
+
+  <main class="content">
+    <div class="card">
+      <h1>Terms of Service</h1>
+      <p class="updated">Last updated: 20 September 2026</p>
+
+      <h2>1. Acceptance of terms</h2>
+      <p>
+        By creating an account or using Adventure, you agree to these Terms of Service.
+        If you do not agree, please do not use the service.
+      </p>
+
+      <h2>2. Your account</h2>
+      <ul>
+        <li>You are responsible for keeping your password confidential.</li>
+        <li>You must provide accurate information when you register.</li>
+        <li>You may not create multiple accounts to abuse the service.</li>
+      </ul>
+
+      <h2>3. Acceptable use</h2>
+      <p>
+        You agree not to misuse the service, attempt to access other users' accounts,
+        interfere with the platform, or use it for any unlawful purpose.
+      </p>
+
+      <h2>4. Changes to the service</h2>
+      <p>
+        Adventure may update, suspend, or discontinue any feature at any time without
+        notice. We will make reasonable efforts to communicate significant changes.
+      </p>
+
+      <h2>5. Contact</h2>
+      <p>
+        Questions about these terms? Reach out via <a href="support.html">Support</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>&copy; 2026 Adventure</span>
+    <nav>
+      <a href="privacy.html">Privacy</a>
+      <a href="terms.html" class="active">Terms</a>
+      <a href="support.html">Support</a>
+    </nav>
+  </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
