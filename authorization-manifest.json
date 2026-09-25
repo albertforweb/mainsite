@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0",
+  "permissions": [
+    { "name": "mainsite:profile:read", "description": "Read the signed-in user's Mainsite profile" },
+    { "name": "mainsite:profile:update", "description": "Update the signed-in user's Mainsite profile" },
+    { "name": "mainsite:users:manage", "description": "Manage users through the Mainsite administration experience" },
+    { "name": "mainsite:roles:manage", "description": "Manage Mainsite roles and assignments" }
+  ],
+  "roles": [
+    {
+      "name": "member",
+      "description": "Default Mainsite member",
+      "permissions": ["mainsite:profile:read", "mainsite:profile:update"]
+    },
+    {
+      "name": "admin",
+      "description": "Mainsite administrator",
+      "permissions": [
+        "mainsite:profile:read",
+        "mainsite:profile:update",
+        "mainsite:users:manage",
+        "mainsite:roles:manage"
+      ]
+    }
+  ]
+}

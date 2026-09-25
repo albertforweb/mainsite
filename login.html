@@ -192,13 +192,9 @@
     <main class="right">
       <div class="card">
         <h2>Sign in</h2>
-        <p class="subtitle">Access your account on Adventure</p>
-        <form id="loginForm" novalidate>
-          <label for="username">Username</label>
-          <input id="username" name="username" type="text" autocomplete="username" required>
-          <label for="password">Password</label>
-          <input id="password" name="password" type="password" autocomplete="current-password" required>
-          <button id="submitBtn" type="submit">Sign in</button>
+        <p class="subtitle">Sign in securely with your Adventure account.</p>
+        <form id="loginForm">
+          <button id="submitBtn" type="submit">Continue with IAM</button>
         </form>
         <div id="error" class="error"></div>
         <a class="back" href="index.html">&larr; Back to home</a>
@@ -220,8 +216,6 @@
   <script>
     (function () {
       const loginForm = document.getElementById('loginForm');
-      const usernameInput = document.getElementById('username');
-      const passwordInput = document.getElementById('password');
       const submitBtn = document.getElementById('submitBtn');
       const errorEl = document.getElementById('error');
 
@@ -235,31 +229,34 @@
         errorEl.classList.remove('show');
       }
 
-      async function login(username, password) {
-        const res = await Adventure.api('/api/auth/login', {
-          method: 'POST',
-          body: JSON.stringify({ username, password }),
-        });
-        const data = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(data.error || 'Login failed (HTTP ' + res.status + ')');
-        return data.user;
-      }
-
       loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         clearError();
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Signing in...';
+        submitBtn.textContent = 'Redirecting to IAM...';
         try {
-          const user = await login(usernameInput.value.trim(), passwordInput.value);
-          Adventure.setUser(user);
-          location.href = 'index.html';
+          await Adventure.beginLogin('index.html');
         } catch (err) {
           showError(err.message);
           submitBtn.disabled = false;
-          submitBtn.textContent = 'Sign in';
+          submitBtn.textContent = 'Continue with IAM';
         }
       });
+
+      (async function completeOidcCallback() {
+        if (!new URLSearchParams(location.search).get('code') && !new URLSearchParams(location.search).get('error')) return;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Completing sign-in...';
+        try {
+          const next = await Adventure.completeLogin();
+          history.replaceState({}, document.title, 'login.html');
+          location.replace(next || 'index.html');
+        } catch (err) {
+          showError(err.message);
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Continue with IAM';
+        }
+      })();
 
       window.Adventure = window.Adventure || {};
       window.Adventure.onAuth = function (user) {

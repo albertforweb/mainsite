@@ -349,7 +349,7 @@
           field('email', 'Email', isEdit ? user.email : '', 'email') +
           '<label for="f_status">Status</label><select id="f_status" name="status">' + statusOptions(isEdit ? user.status : 'active') + '</select>' +
           pwField +
-          '<label>Roles</label>' + roleCheckboxes(isEdit ? user.roles : []);
+          '<label>Roles</label>' + roleCheckboxes(isEdit ? user.roles : (roles.some((r) => r.name === 'member') ? ['member'] : []));
         showModal(isEdit ? 'Edit user' : 'Create user', html);
         $('modalForm').dataset.mode = isEdit ? 'edit' : 'create';
         $('modalForm').dataset.id = isEdit ? user.id : '';

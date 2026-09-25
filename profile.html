@@ -248,13 +248,14 @@
         badge.classList.toggle('active', (user.status || 'active') === 'active');
         const rolesEl = document.getElementById('rolesList');
         rolesEl.innerHTML = '';
-        (user.roles || []).forEach(function (r) {
+        const appRoles = user.grants && user.grants.mainsite ? user.grants.mainsite : [];
+        appRoles.forEach(function (r) {
           const tag = document.createElement('span');
           tag.className = 'role-tag';
           tag.textContent = r;
           rolesEl.appendChild(tag);
         });
-        if (!(user.roles || []).length) rolesEl.textContent = 'No roles assigned';
+        if (!appRoles.length) rolesEl.textContent = 'No Mainsite roles assigned';
       }
 
       function showMsg(cls, text) {
